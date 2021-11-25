@@ -16,7 +16,7 @@ def chFeedback():
     aperiodicFlexible = 'Апериодическая гибкая'
     # Переменная для проверки правильности ввода команды
     newChoiceFeedback = True
-    # Цикл для проверки правильности ввода команды и для присвоения переменной feedback названия типа обратной связи
+    # Цикл для проверки правильности ввода команды и для присвоения переменной feedbackType названия типа обратной связи
     while newChoiceFeedback:
         print(color.Style.RESET_ALL)
         # Выбор типа обратной связи
@@ -45,7 +45,7 @@ def chFeedback():
             newChoiceFeedback = True
     return feedbackType
 
-
+# Описание функции для выбора типа турбины
 def chTurbine():
     # Переменные - типы турбины
     hydroTurbine = 'Гидротурбина'
@@ -78,12 +78,12 @@ def chTurbine():
 
 feedback = chFeedback()
 turbine = chTurbine()
-
-
 print('Элементы исследуемой системы автоматического управления:\n'
       '1. Усилительно-исполнительный орган;\n'
       '2. ' + turbine + ';\n'
       '3. Генератор;\n'
       '4. ' + feedback + '.\n')
+
+
 
 
