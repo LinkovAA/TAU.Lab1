@@ -393,8 +393,10 @@ wFeedback = chioceLink()
 wOpenCAY = wOrgan*wTurbine*wGenerator
 wCloseCAY = matlab.feedback(wOpenCAY, wFeedback)
 choice = selectCommand1()
-for Koc in numpy.arange(0, 10, 0.01):
 
+# Поиск "Кос". Если запускается следующая функция без выведения "Кос", значит, изменение "Кос" не выводит систему из
+# устойчивого состояния
+for Koc in numpy.arange(0, 100, 0.01):
     wFeedback = matlab.tf([Koc], [0, 1])
     wCloseCAY = matlab.feedback(wOpenCAY, wFeedback)
     c = wCloseCAY.den[0][0]
@@ -402,14 +404,17 @@ for Koc in numpy.arange(0, 10, 0.01):
     size = len(c)
     for j in range(size):
         coef["%s" % j] = c[j]
-    matrix = numpy.array([[coef["1"], coef["3"]],
-              [coef["0"], coef["2"]]])
+    matrix = numpy.array([[coef['1'], coef['3']], [coef['0'], coef['2']]])
     if (numpy.linalg.det(matrix) >= -0.0001) & (numpy.linalg.det(matrix) <= 0.0001):
         print('Предельное значение коэффициента обратной связи:', Koc)
         break
-        selectCommand2()
-
 choice = selectCommand2()
+
+
+
+
+
+
 
 
 
