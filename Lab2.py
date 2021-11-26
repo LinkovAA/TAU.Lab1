@@ -234,6 +234,51 @@ def freqCh():
     pyplot.show()
 
 
+def mikhailov():
+    print('Передаточная функция САУ:\n %s' % wCloseCAY)
+    mChoice = True
+    while mChoice:
+        print(color.Style.RESET_ALL)
+        mChoice = False
+        w = sympy.symbol('w')
+        print('Пожалуйста, введите коэффициенты знаменателя передаточной функции, начиная от коэффициентов, стоящих\n'
+              'при s^4, и заканчивая свободным членом (коэффициентом при s^0).')
+        a4 = input('a4')
+        a3 = input('a3')
+        a2 = input('a2')
+        a1 = input('a1')
+        a0 = input('a0')
+        try:
+            a4 = float(a4)
+            a3 = float(a3)
+            a2 = float(a2)
+            a1 = float(a1)
+            a0 = float(a0)
+            if a4 == 0:
+
+                dClose = a3*(1j*w)**3+a2*(1j*w)**2+a1*(1j*w)+a0
+                dClose = sympy.expand(dClose)
+                print('Характеристическое уравнение замкнутой системы: \n%s' % dClose)
+                U = re(dClose)
+                V = im(dClose)
+
+
+            x = [U.subs({w: q}) for q in numpy.arange(0, 0.2, 0.01)]
+            y = [V.subs({w: q}) for q in numpy.arange(0, 0.2, 0.01)]
+            print('Начальная точка M(%s, %s)' % (U.subs({w: 0}), V.subs({w: 0})))
+            pyplot.plot(x, y, 'green')
+            pyplot.title(name)
+            pyplot.ylabel('V(w)')
+            pyplot.xlabel('U(w)')
+
+
+        except ValueError:
+            print(color.Fore.RED + '\nПожалуйста, введите числовое значение!\n')
+            mChoice = True
+
+
+
+
 # Функция для замены коэффициента усиления обратной связи
 def changeK():
     lChoice = True
