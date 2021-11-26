@@ -234,7 +234,8 @@ def freqCh():
     pyplot.show()
 
 
-def mikhailov():
+# Функция для определения характеристического уравнения
+def mikhailovCh():
     print('Передаточная функция САУ:\n %s' % wCloseCAY)
     mChoice = True
     while mChoice:
@@ -255,28 +256,38 @@ def mikhailov():
             a1 = float(a1)
             a0 = float(a0)
             if a4 == 0:
-
-                dClose = a3*(1j*w)**3+a2*(1j*w)**2+a1*(1j*w)+a0
+                dClose = a3 * (1j * w) ** 3 + a2 * (1j * w) ** 2 + a1 * (1j * w) + a0
                 dClose = sympy.expand(dClose)
                 print('Характеристическое уравнение замкнутой системы: \n%s' % dClose)
-                U = re(dClose)
-                V = im(dClose)
-
-
-            x = [U.subs({w: q}) for q in numpy.arange(0, 0.2, 0.01)]
-            y = [V.subs({w: q}) for q in numpy.arange(0, 0.2, 0.01)]
-            print('Начальная точка M(%s, %s)' % (U.subs({w: 0}), V.subs({w: 0})))
-            pyplot.plot(x, y, 'green')
-            pyplot.title(name)
-            pyplot.ylabel('V(w)')
-            pyplot.xlabel('U(w)')
-
-
+                U = dClose.real
+                V = dClose.imag
+                print('Действительная часть U(w)= %s' % U)
+                print('Мнимая часть V(w)= %s' % V)
+                x = [U.subs({w: q}) for q in numpy.arange(0, 0.2, 0.01)]
+                y = [V.subs({w: q}) for q in numpy.arange(0, 0.2, 0.01)]
+                print('Начальная точка M(%s, %s)' % (U.subs({w: 0}), V.subs({w: 0})))
+                pyplot.plot(x, y, 'green')
+                pyplot.title(name)
+                pyplot.ylabel('V(w)')
+                pyplot.xlabel('U(w)')
+            else:
+                dClose = a4 * (1j * w) ** 4 + a3 * (1j * w) ** 3 + a2 * (1j * w) ** 2 + a1 * (1j * w) + a0
+                dClose = sympy.expand(dClose)
+                print('Характеристическое уравнение замкнутой системы: \n%s' % dClose)
+                U = dClose.real
+                V = dClose.imag
+                print('Действительная часть U(w)= %s' % U)
+                print('Мнимая часть V(w)= %s' % V)
+                x = [U.subs({w: q}) for q in numpy.arange(0, 0.2, 0.01)]
+                y = [V.subs({w: q}) for q in numpy.arange(0, 0.2, 0.01)]
+                print('Начальная точка M(%s, %s)' % (U.subs({w: 0}), V.subs({w: 0})))
+                pyplot.plot(x, y, 'green')
+                pyplot.title(name)
+                pyplot.ylabel('V(w)')
+                pyplot.xlabel('U(w)')
         except ValueError:
             print(color.Fore.RED + '\nПожалуйста, введите числовое значение!\n')
             mChoice = True
-
-
 
 
 # Функция для замены коэффициента усиления обратной связи
@@ -317,8 +328,7 @@ def selectCommand():
                             '4 - Проверить устойчивость по критерию Найквиста;\n'
                             '5 - Построить ЛАЧХ и ЛФЧХ;\n'
                             '6 - Проверить устойчивость по критерию Михайлова;\n'
-                            '7 - Вычислить значение "Koc", при котором САУ находится на границе устойчивости;\n'
-                            '8 - Изменить коэффициент "Кос".\n')
+                            '7 - Закончить работу.\n')
         if commandUser.isdigit():
             commandUser = int(commandUser)
             if commandUser == 1:
@@ -326,12 +336,14 @@ def selectCommand():
             elif commandUser == 2:
                 characteristicH()
             elif commandUser == 3:
-                polesW()
+                nyquist()
             elif commandUser == 4:
                 polesW()
             elif commandUser == 5:
                 freqCh()
-            elif commandUser == 8:
+            elif commandUser == 6:
+                mikhailovCh()
+            elif commandUser == 7:
                 perform = False
             else:
                 print(color.Fore.RED + '\nНедопустимое значение!')
