@@ -5,6 +5,7 @@ import numpy as numpy
 import math
 import colorama as color
 import sympy as sympy
+from sympy import *
 
 # Функция для выбора типа обратной связи
 def chFeedback():
@@ -234,21 +235,21 @@ def freqCh():
     pyplot.show()
 
 
-# Функция для определения характеристического уравнения
+# Функция для определения характеристического уравнения и построения годографа Михайлова
 def mikhailovCh():
     print('Передаточная функция САУ:\n %s' % wCloseCAY)
     mChoice = True
     while mChoice:
         print(color.Style.RESET_ALL)
         mChoice = False
-        w = sympy.symbol('w')
+        w = sympy.symbols('w')
         print('Пожалуйста, введите коэффициенты знаменателя передаточной функции, начиная от коэффициентов, стоящих\n'
               'при s^4, и заканчивая свободным членом (коэффициентом при s^0).')
-        a4 = input('a4')
-        a3 = input('a3')
-        a2 = input('a2')
-        a1 = input('a1')
-        a0 = input('a0')
+        a4 = input('a4: ')
+        a3 = input('a3: ')
+        a2 = input('a2: ')
+        a1 = input('a1: ')
+        a0 = input('a0: ')
         try:
             a4 = float(a4)
             a3 = float(a3)
@@ -259,32 +260,32 @@ def mikhailovCh():
                 dClose = a3 * (1j * w) ** 3 + a2 * (1j * w) ** 2 + a1 * (1j * w) + a0
                 dClose = sympy.expand(dClose)
                 print('Характеристическое уравнение замкнутой системы: \n%s' % dClose)
-                U = dClose.real
-                V = dClose.imag
-                print('Действительная часть U(w)= %s' % U)
-                print('Мнимая часть V(w)= %s' % V)
-                x = [U.subs({w: q}) for q in numpy.arange(0, 0.2, 0.01)]
-                y = [V.subs({w: q}) for q in numpy.arange(0, 0.2, 0.01)]
-                print('Начальная точка M(%s, %s)' % (U.subs({w: 0}), V.subs({w: 0})))
+                U = re(dClose)
+                V = im(dClose)
+                x = [U.subs({w: q}) for q in numpy.arange(0, 2, 0.01)]
+                y = [V.subs({w: q}) for q in numpy.arange(0, 2, 0.01)]
                 pyplot.plot(x, y, 'green')
-                pyplot.title(name)
+                pyplot.title('Годограф Михайлова')
                 pyplot.ylabel('V(w)')
                 pyplot.xlabel('U(w)')
+                pyplot.grid(True)
+                pyplot.plot()
+                pyplot.show()
             else:
                 dClose = a4 * (1j * w) ** 4 + a3 * (1j * w) ** 3 + a2 * (1j * w) ** 2 + a1 * (1j * w) + a0
                 dClose = sympy.expand(dClose)
                 print('Характеристическое уравнение замкнутой системы: \n%s' % dClose)
-                U = dClose.real
-                V = dClose.imag
-                print('Действительная часть U(w)= %s' % U)
-                print('Мнимая часть V(w)= %s' % V)
+                U = re(dClose)
+                V = im(dClose)
                 x = [U.subs({w: q}) for q in numpy.arange(0, 0.2, 0.01)]
                 y = [V.subs({w: q}) for q in numpy.arange(0, 0.2, 0.01)]
-                print('Начальная точка M(%s, %s)' % (U.subs({w: 0}), V.subs({w: 0})))
                 pyplot.plot(x, y, 'green')
-                pyplot.title(name)
+                pyplot.title('Годограф Михайлова')
                 pyplot.ylabel('V(w)')
                 pyplot.xlabel('U(w)')
+                pyplot.grid(True)
+                pyplot.plot()
+                pyplot.show()
         except ValueError:
             print(color.Fore.RED + '\nПожалуйста, введите числовое значение!\n')
             mChoice = True
@@ -316,8 +317,8 @@ def changeK():
             lChoice = True
     return wfFeedback
 
-
-def selectCommand():
+# Функция для выбора действий
+def selectCommand1():
     perform = True
     while perform:
         print(color.Style.RESET_ALL)
@@ -328,7 +329,7 @@ def selectCommand():
                             '4 - Проверить устойчивость по критерию Найквиста;\n'
                             '5 - Построить ЛАЧХ и ЛФЧХ;\n'
                             '6 - Проверить устойчивость по критерию Михайлова;\n'
-                            '7 - Закончить работу.\n')
+                            '7 - Найти коэффициент "Кос", при котором система находится на границе устойчивости;\n')
         if commandUser.isdigit():
             commandUser = int(commandUser)
             if commandUser == 1:
@@ -351,6 +352,38 @@ def selectCommand():
             print(color.Fore.RED + '\nПожалуйста, введите числовое значение!')
 
 
+def selectCommand2():
+    perform = True
+    while perform:
+        print(color.Style.RESET_ALL)
+        commandUser = input('Выберите пункт, который необходимо выполнить:\n'
+                            '1 - Показать передаточную функцию исследуемой САУ;\n'
+                            '2 - Построить переходную характеристику;\n'
+                            '3 - Найти полюса передаточной функции;\n'
+                            '4 - Проверить устойчивость по критерию Найквиста;\n'
+                            '5 - Построить ЛАЧХ и ЛФЧХ;\n'
+                            '6 - Проверить устойчивость по критерию Михайлова;\n'
+                            '7 - Закончить работу;\n')
+        if commandUser.isdigit():
+            commandUser = int(commandUser)
+            if commandUser == 1:
+                showW()
+            elif commandUser == 2:
+                characteristicH()
+            elif commandUser == 3:
+                nyquist()
+            elif commandUser == 4:
+                polesW()
+            elif commandUser == 5:
+                freqCh()
+            elif commandUser == 6:
+                mikhailovCh()
+            elif commandUser == 7:
+                perform = False
+            else:
+                print(color.Fore.RED + '\nНедопустимое значение!')
+        else:
+            print(color.Fore.RED + '\nПожалуйста, введите числовое значение!')
 
 
 wOrgan = chioceOrgan()
@@ -359,10 +392,24 @@ wGenerator = chioceGenerator()
 wFeedback = chioceLink()
 wOpenCAY = wOrgan*wTurbine*wGenerator
 wCloseCAY = matlab.feedback(wOpenCAY, wFeedback)
-choice = selectCommand()
-wFeedback = changeK()
-wCloseCAY = matlab.feedback(wOpenCAY, wFeedback)
-choice = selectCommand()
+choice = selectCommand1()
+for Koc in numpy.arange(0, 10, 0.01):
+
+    wFeedback = matlab.tf([Koc], [0, 1])
+    wCloseCAY = matlab.feedback(wOpenCAY, wFeedback)
+    c = wCloseCAY.den[0][0]
+    coef = {}
+    size = len(c)
+    for j in range(size):
+        coef["%s" % j] = c[j]
+    matrix = numpy.array([[coef["1"], coef["3"]],
+              [coef["0"], coef["2"]]])
+    if (numpy.linalg.det(matrix) >= -0.0001) & (numpy.linalg.det(matrix) <= 0.0001):
+        print('Предельное значение коэффициента обратной связи:', Koc)
+        break
+        selectCommand2()
+
+choice = selectCommand2()
 
 
 
