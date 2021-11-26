@@ -6,7 +6,7 @@ import math
 import colorama as color
 import sympy as sympy
 
-# Описание функции для выбора типа обратной связи
+# Функция для выбора типа обратной связи
 def chFeedback():
     print('Выберите тип обратной связи САУ и тип турбины:')
     # Переменные - типы обратной связи
@@ -14,7 +14,6 @@ def chFeedback():
     flexible = 'Гибкая'
     aperiodicRigid = 'Апериодическая жёсткая'
     aperiodicFlexible = 'Апериодическая гибкая'
-    # Переменная для проверки правильности ввода команды
     newChoiceFeedback = True
     # Цикл для проверки правильности ввода команды и для присвоения переменной "feedbackType" типа обратной связи
     while newChoiceFeedback:
@@ -36,7 +35,7 @@ def chFeedback():
             elif typeOfFeedback == 3:
                 feedbackType = 'Апериодическая жёсткая обратная связь'
             elif typeOfFeedback == 4:
-                feedbackType = 'Апериодтческая гибкая обратная связь'
+                feedbackType = 'Апериодическая гибкая обратная связь'
             else:
                 print(color.Fore.RED + '\nНедопустимое значение!')
                 newChoiceFeedback = True
@@ -45,12 +44,11 @@ def chFeedback():
             newChoiceFeedback = True
     return feedbackType
 
-# Описание функции для выбора типа турбины
+# Функция для выбора типа турбины
 def chTurbine():
     # Переменные - типы турбины
     hydroTurbine = 'Гидротурбина'
     steamTurbine = 'Паровая турбина'
-    # Переменная для проверки правильности ввода команды
     newChoiceTurbine = True
     # Цикл для проверки правильности ввода команды и для присвоения переменной "turbine" названия типа турбины
     while newChoiceTurbine:
@@ -87,7 +85,6 @@ print('\nЭлементы исследуемой системы автомати
 # Функция для ввода коэффициентов передаточной функции исполнительного органа
 def chioceOrgan():
     oChoice = True
-    # Цикл для проверки ввода коэффициентов передаточной функции
     while oChoice:
         print(color.Style.RESET_ALL)
         oChoice = False
@@ -108,7 +105,6 @@ def chioceOrgan():
 # Функция для ввода коэффициентов передаточной функции турбины
 def chioceTurbine():
     tChoice = True
-    # Цикл для проверки ввода коэффициентов передаточной функции
     while tChoice:
         print(color.Style.RESET_ALL)
         tChoice = False
@@ -139,7 +135,6 @@ def chioceTurbine():
 # Функция для ввода коэффициентов передаточной функции генератора
 def chioceGenerator():
     gChoice = True
-    # Цикл для проверки ввода коэффициентов передаточной функции
     while gChoice:
         print(color.Style.RESET_ALL)
         gChoice = False
@@ -157,7 +152,6 @@ def chioceGenerator():
 # Функция для ввода коэффициентов обратной связи
 def chioceLink():
     lChoice = True
-    # Цикл для проверки ввода коэффициентов передаточной функции
     while lChoice:
         print(color.Style.RESET_ALL)
         lChoice = False
@@ -181,7 +175,139 @@ def chioceLink():
     return wfFeedback
 
 
+# Функция для вывода на экран передаточной функции
+def showW():
+    print('Передаточная функция САУ:\n %s' % wCloseCAY)
+
+
+# Функция для построения переходной характеристики
+def characteristicH():
+    print('Переходная характеристика изображена на графике.\n')
+    [y, x] = matlab.step(wCloseCAY)
+    pyplot.plot(x, y, 'Blue')
+    pyplot.title('Переходная характеристика')
+    pyplot.xlabel('t, с')
+    pyplot.ylabel("h(t)")
+    pyplot.grid()
+    pyplot.show()
+
+
+# Функция для вывода на экран полюсов передаточной функции
+def polesW():
+    pChoice = True
+    while pChoice:
+        print(color.Style.RESET_ALL)
+        pChoice = False
+        print('Полюса передаточной функции:\n %s' % matlab.pole(wCloseCAY))
+        a = input('\nВведите "1", если полюса левые, введите "2", если - нет:\n')
+        if a.isdigit():
+            a = int(a)
+            if a == 1:
+                print('Полюса левые, следовательно, система устойчива.\n')
+            elif a == 2:
+                print('Полюс(-а) не является(-ются) левым(-ыми), значит, система неустойчива.\n')
+            else:
+                print(color.Fore.RED + '\nНекорректное значение!')
+                pChoice = True
+        else:
+            print(color.Fore.RED + '\nНекорректное значение!')
+            pChoice = True
+
+
+# Функция для построения годографа Найквиста
+def nyquist():
+    pyplot.title('Годограф Найквиста')
+    pyplot.ylabel('Im')
+    pyplot.xlabel('Re')
+    matlab.nyquist(wOpenCAY)
+    pyplot.grid(True)
+    pyplot.plot()
+    pyplot.show()
+
+
+# Функция для построения ЛАЧХ и ЛФЧХ
+def freqCh():
+    print('ЛАЧХ и ЛФЧХ изображены на графике.\n')
+    matlab.bode(wCloseCAY, dB=False)
+    pyplot.plot()
+    pyplot.xlabel('Частота (Гц)')
+    pyplot.show()
+
+
+# Функция для замены коэффициента усиления обратной связи
+def changeK():
+    lChoice = True
+    # Цикл для проверки ввода коэффициентов передаточной функции
+    while lChoice:
+        print(color.Style.RESET_ALL)
+        lChoice = False
+        print('Введите коэффициенты передаточной функции обратной связи:')
+        k = input('Пожалуйста, введите НОВЫЙ коэффициент усиления "Koc": ')
+        T = input('Пожалуйста, введите ПРЕЖНЮЮ постоянную времени "Toc": ')
+        try:
+            k = float(k)
+            T = float(T)
+            if feedback == 'Жёсткая обратная связь':
+                wfFeedback = matlab.tf([k], [1])
+            elif feedback == 'Гибкая обратная связь':
+                wfFeedback = matlab.tf([k, 0], [1])
+            elif feedback == 'Апериодическая жёсткая обратная связь':
+                wfFeedback = matlab.tf([k], [T, 1])
+            elif feedback == 'Апериодическая гибкая обратная связь':
+                wfFeedback = matlab.tf([k, 0], [T, 1])
+        except ValueError:
+            print(color.Fore.RED + '\nПожалуйста, введите числовое значение!\n')
+            lChoice = True
+    return wfFeedback
+
+
+def selectCommand():
+    perform = True
+    while perform:
+        print(color.Style.RESET_ALL)
+        commandUser = input('Выберите пункт, который необходимо выполнить:\n'
+                            '1 - Показать передаточную функцию исследуемой САУ;\n'
+                            '2 - Построить переходную характеристику;\n'
+                            '3 - Найти полюса передаточной функции;\n'
+                            '4 - Проверить устойчивость по критерию Найквиста;\n'
+                            '5 - Построить ЛАЧХ и ЛФЧХ;\n'
+                            '6 - Проверить устойчивость по критерию Михайлова;\n'
+                            '7 - Вычислить значение "Koc", при котором САУ находится на границе устойчивости;\n'
+                            '8 - Изменить коэффициент "Кос".\n')
+        if commandUser.isdigit():
+            commandUser = int(commandUser)
+            if commandUser == 1:
+                showW()
+            elif commandUser == 2:
+                characteristicH()
+            elif commandUser == 3:
+                polesW()
+            elif commandUser == 4:
+                polesW()
+            elif commandUser == 5:
+                freqCh()
+            elif commandUser == 8:
+                perform = False
+            else:
+                print(color.Fore.RED + '\nНедопустимое значение!')
+        else:
+            print(color.Fore.RED + '\nПожалуйста, введите числовое значение!')
+
+
+
+
 wOrgan = chioceOrgan()
 wTurbine = chioceTurbine()
-wFeedback = chioceLink()
 wGenerator = chioceGenerator()
+wFeedback = chioceLink()
+wOpenCAY = wOrgan*wTurbine*wGenerator
+wCloseCAY = matlab.feedback(wOpenCAY, wFeedback)
+choice = selectCommand()
+wFeedback = changeK()
+wCloseCAY = matlab.feedback(wOpenCAY, wFeedback)
+choice = selectCommand()
+
+
+
+
+
