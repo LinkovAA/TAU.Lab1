@@ -402,14 +402,13 @@ for Koc in numpy.arange(0, 100, 0.01):
     c = wCloseCAY.den[0][0]
     coef = {}
     size = len(c)
-    for j in range(size):
+    for j in range(0, size):
         coef["%s" % j] = c[j]
     matrix = numpy.array([[coef['1'], coef['3']], [coef['0'], coef['2']]])
     if (numpy.linalg.det(matrix) >= -0.0001) & (numpy.linalg.det(matrix) <= 0.0001):
         print('Предельное значение коэффициента обратной связи:', Koc)
         break
 choice = selectCommand2()
-
 
 
 
