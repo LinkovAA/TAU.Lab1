@@ -8,7 +8,7 @@ import sympy as sympy
 
 # Описание функции для выбора типа обратной связи
 def chFeedback():
-    print('\nВыберите тип обратной связи САУ и тип турбины:')
+    print('Выберите тип обратной связи САУ и тип турбины:')
     # Переменные - типы обратной связи
     rigid = 'Жёсткая'
     flexible = 'Гибкая'
@@ -16,7 +16,7 @@ def chFeedback():
     aperiodicFlexible = 'Апериодическая гибкая'
     # Переменная для проверки правильности ввода команды
     newChoiceFeedback = True
-    # Цикл для проверки правильности ввода команды и для присвоения переменной "feedbackType" названия типа обратной связи
+    # Цикл для проверки правильности ввода команды и для присвоения переменной "feedbackType" типа обратной связи
     while newChoiceFeedback:
         print(color.Style.RESET_ALL)
         # Выбор типа обратной связи
@@ -92,8 +92,8 @@ def chioceOrgan():
         print(color.Style.RESET_ALL)
         oChoice = False
         print('Введите коэффициенты передаточной функции исполнительного органа:')
-        k = input('Пожалуйста, введите коэффициент "k": ')
-        T = input('Пожалуйста, введите коэффициент "T": ')
+        k = input('Пожалуйста, введите коэффициент "Ку": ')
+        T = input('Пожалуйста, введите коэффициент "Tу": ')
         # Конструкция try-except для проверки правильности ввода коэффициентов
         try:
             k = float(k)
@@ -112,10 +112,10 @@ def chioceTurbine():
     while tChoice:
         print(color.Style.RESET_ALL)
         tChoice = False
-        print('Введите коэффициенты передаточной функции исполнительного органа:')
+        print('Введите коэффициенты передаточной функции турбины:')
         if turbine == 'Гидротурбина':
-            T1 = input('Пожалуйста, введите постоянную времени гидротурбины: ')
-            T2 = input('Пожалуйста, введите постоянную времени генератора: ')
+            T1 = input('Пожалуйста, введите постоянную времени гидротурбины "Тгт": ')
+            T2 = input('Пожалуйста, введите постоянную времени генератора "Тг": ')
             try:
                 T1 = float(T1)
                 T2 = float(T2)
@@ -124,8 +124,8 @@ def chioceTurbine():
                 print(color.Fore.RED + '\nПожалуйста, введите числовое значение!\n')
                 tChoice = True
         elif turbine == 'Паровая турбина':
-            k = input('Пожалуйста, введите коэффициент усиления: ')
-            T = input('Пожалуйста, введите постоянную времени: ')
+            k = input('Пожалуйста, введите коэффициент усиления "Кпт": ')
+            T = input('Пожалуйста, введите постоянную времени "Tпт": ')
             try:
                 k = float(k)
                 T = float(T)
@@ -136,8 +136,52 @@ def chioceTurbine():
     return wfTurbine
 
 
+# Функция для ввода коэффициентов передаточной функции генератора
+def chioceGenerator():
+    gChoice = True
+    # Цикл для проверки ввода коэффициентов передаточной функции
+    while gChoice:
+        print(color.Style.RESET_ALL)
+        gChoice = False
+        print('Введите коэффициенты передаточной функции генератора:')
+        T = input('Пожалуйста, введите коэффициент "Tг": ')
+        try:
+            T = float(T)
+            wfGenerator = matlab.tf([1], [T, 1])
+        except ValueError:
+            print(color.Fore.RED + '\nПожалуйста, введите числовое значение!\n')
+            gChoice = True
+    return wfGenerator
 
+
+# Функция для ввода коэффициентов обратной связи
+def chioceLink():
+    lChoice = True
+    # Цикл для проверки ввода коэффициентов передаточной функции
+    while lChoice:
+        print(color.Style.RESET_ALL)
+        lChoice = False
+        print('Введите коэффициенты передаточной функции обратной связи:')
+        k = input('Пожалуйста, введите коэффициент усиления "Koc": ')
+        T = input('Пожалуйста, введите постоянную времени "Toc": ')
+        try:
+            k = float(k)
+            T = float(T)
+            if feedback == 'Жёсткая обратная связь':
+                wfFeedback = matlab.tf([k], [1])
+            elif feedback == 'Гибкая обратная связь':
+                wfFeedback = matlab.tf([k, 0], [1])
+            elif feedback == 'Апериодическая жёсткая обратная связь':
+                wfFeedback = matlab.tf([k], [T, 1])
+            elif feedback == 'Апериодическая гибкая обратная связь':
+                wfFeedback = matlab.tf([k, 0], [T, 1])
+        except ValueError:
+            print(color.Fore.RED + '\nПожалуйста, введите числовое значение!\n')
+            lChoice = True
+    return wfFeedback
 
 
 wOrgan = chioceOrgan()
 wTurbine = chioceTurbine()
+wFeedback = chioceLink()
+wGenerator = chioceGenerator()
