@@ -229,7 +229,7 @@ def nyquist():
 # Функция для построения ЛАЧХ и ЛФЧХ
 def freqCh():
     print('ЛАЧХ и ЛФЧХ изображены на графике.\n')
-    matlab.bode(wCloseCAY, dB=False)
+    matlab.bode(wOpenCAY, dB=False)
     pyplot.plot()
     pyplot.xlabel('Частота (Гц)')
     pyplot.show()
